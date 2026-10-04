@@ -1,22 +1,14 @@
 import os
-from crewai import Agent, Task, Crew, Process
-from langchain_google_genai import ChatGoogleGenerativeAI
+from crewai import Agent, Task, Crew, Process, LLM
 from tools.weather import get_weather_data
 from tools.geodata import get_location_data
 from tools.retrieval import search_emergency_knowledge
 
-def initialize_llm(api_key: str, provider: str = "Gemini"):
-    """Initialize LLM with fallback support."""
-    if provider == "Gemini":
-        return ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash",
-            google_api_key=api_key,
-            temperature=0.2
-        )
-    # Default fallback object
-    return ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash",
-        google_api_key=api_key,
+def initialize_llm(api_key: str):
+    """Initialize LLM using CrewAI's native LLM wrapper."""
+    return LLM(
+        model="gemini/gemini-1.5-flash",
+        api_key=api_key,
         temperature=0.2
     )
 
@@ -29,7 +21,7 @@ def run_rescue_mission(report: str, location_query: str, api_key: str):
     weather_res = get_weather_data(lat, lon)
     rag_res = search_emergency_knowledge(report)
 
-    # CrewAI Agents Setup (PRD Section 8)[cite: 1]
+    # CrewAI Agents Setup
     incident_analyst = Agent(
         role="Incident Analyst",
         goal="Extract incident facts, casualties, hazards, and missing details accurately.",
@@ -64,7 +56,7 @@ def run_rescue_mission(report: str, location_query: str, api_key: str):
 
     planner = Agent(
         role="Response Planner",
-        goal="Synthesize all gather evidence into an actionable, prioritized action plan.",
+        goal="Synthesize all gathered evidence into an actionable, prioritized action plan.",
         backstory="A senior incident commander synthesizing multi-agent data into step-by-step actions.",
         llm=llm,
         verbose=True
