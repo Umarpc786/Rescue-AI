@@ -1,0 +1,20 @@
+[
+  {
+    "id": "protocol_001",
+    "title": "Road Traffic Accident Multi-Casualty Response",
+    "category": "Road Safety",
+    "content": "In multi-casualty vehicle collisions: 1. Ensure scene safety before approaching. Turn on hazard lights and set up warning signs if safe. 2. Call emergency dispatch immediately with exact location, vehicle count, and casualty estimate. 3. Do not move unconscious victims unless immediate danger (fire, sinking) exists. 4. Control severe bleeding with clean pressure dressings. 5. If heavy rain or extreme weather occurs, secure victims with thermal protection and avoid standing water near electrical hazards."
+  },
+  {
+    "id": "protocol_002",
+    "title": "Severe Weather and Flash Flood Hazard Response",
+    "category": "Weather Emergency",
+    "content": "During flash floods or heavy rainfall during severe accidents: 1. Seek higher ground immediately if water rises above ankle depth. 2. Avoid driving or walking through moving water. 3. Be aware of downed power lines or electrical discharge in submerged areas. 4. Maintain radio/cellular communication with local disaster management emergency desks."
+  },
+  {
+    "id": "protocol_003",
+    "title": "Fire Emergency and Smoke Inhalation Standard Operating Procedure",
+    "category": "Fire Safety",
+    "content": "For structural or vehicle fires: 1. Keep low under smoke to avoid inhalation. 2. Use ABC dry chemical extinguishers on vehicle or electrical fires if contained and safe. 3. Maintain minimum safe clearance of 100 feet from active vehicle flames due to explosion hazard. 4. Cool burn injuries with clean, ambient water for 10-15 minutes."
+  }
+]
