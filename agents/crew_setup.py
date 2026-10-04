@@ -5,18 +5,18 @@ from tools.geodata import get_location_data
 from tools.retrieval import search_emergency_knowledge
 
 def initialize_llm(groq_api_key: str):
-    """Initialize LLM using Groq API with CrewAI's native LLM wrapper."""
-    os.environ["GROQ_API_KEY"] = groq_api_key
+    """Initialize Groq using CrewAI's native OpenAI endpoint interface."""
+    os.environ["OPENAI_API_KEY"] = groq_api_key
+    os.environ["OPENAI_API_BASE"] = "https://api.groq.com/openai/v1"
     
-    # Using LLaMA 3.3 70B Versatile on Groq (Fast & Free)
     return LLM(
-        model="groq/llama-3.3-70b-versatile",
+        model="openai/llama-3.3-70b-versatile",
         api_key=groq_api_key,
+        base_url="https://api.groq.com/openai/v1",
         temperature=0.2
     )
 
 def run_rescue_mission(report: str, location_query: str, api_key: str):
-    # Initialize Groq LLM
     llm = initialize_llm(api_key)
     
     # Tool collection step
