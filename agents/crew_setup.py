@@ -9,7 +9,7 @@ def initialize_llm(api_key: str):
     os.environ["GEMINI_API_KEY"] = api_key
     
     return LLM(
-        model="gemini/gemini-2.0-flash",
+        model="gemini/gemini-3.8-flash",
         api_key=api_key,
         temperature=0.2
     )
