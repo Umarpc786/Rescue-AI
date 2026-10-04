@@ -4,16 +4,7 @@ from tools.weather import get_weather_data
 from tools.geodata import get_location_data
 from tools.retrieval import search_emergency_knowledge
 
-def initialize_llm(api_key: str):
-    """Initialize LLM using CrewAI's native LLM wrapper with proper Gemini model naming."""
-    # Environment variable explicitly set karein taake LiteLLM backend read kar sake
-    os.environ["GEMINI_API_KEY"] = api_key
-    
-    return LLM(
-        model="gemini/gemini-1.5-flash-latest",
-        api_key=api_key,
-        temperature=0.2
-    )
+
 
 def run_rescue_mission(report: str, location_query: str, api_key: str):
     llm = initialize_llm(api_key)
@@ -22,7 +13,21 @@ def run_rescue_mission(report: str, location_query: str, api_key: str):
     geo_res = get_location_data(location_query)
     lat, lon = geo_res.get("latitude", 29.3956), geo_res.get("longitude", 71.6836)
     weather_res = get_weather_data(lat, lon)
-    rag_res = search_emergency_knowledge(report)
+    ragimport os
+from crewai import LLM
+
+def initialize_llm(api_key: str):
+    """Initialize LLM using CrewAI's native LLM wrapper with stable Gemini model identifiers."""
+    # LiteLLM backend authentication ke liye environment variable set karein
+    os.environ["GEMINI_API_KEY"] = api_key
+    
+    # Standard stable Gemini 1.5 Flash identifier
+    return LLM(
+        model="gemini/gemini-1.5-flash-001",
+        api_key=api_key,
+        temperature=0.2
+    )
+    res = search_emergency_knowledge(report)
 
     # CrewAI Agents Setup
     incident_analyst = Agent(
