@@ -5,31 +5,28 @@ from tools.weather import get_weather_data
 from tools.geodata import get_location_data
 from tools.retrieval import search_emergency_knowledge
 
-def initialize_llm(api_key: str):
-    """Initialize LLM with robust fallback models to handle 503 high demand spikes."""
+# Priority list of models to rotate through if quota (429) or rate limits occur
+FALLBACK_MODELS = [
+    "gemini/gemini-1.5-flash",
+    "gemini/gemini-1.5-pro",
+    "gemini/gemini-2.0-flash-lite",
+    "groq/llama-3.3-70b-versatile"
+]
+
+def initialize_llm(api_key: str, model_name: str = "gemini/gemini-1.5-flash"):
+    """Initialize LLM using specified model with environment configuration."""
     os.environ["GEMINI_API_KEY"] = api_key
     
-    # Check if Groq API key is present for cross-provider fallback
     groq_key = os.getenv("GROQ_API_KEY")
     if groq_key:
         os.environ["GROQ_API_KEY"] = groq_key
 
-    try:
-        # Primary Model Choice
-        return LLM(
-            model="gemini/gemini-3.8-flash",
-            api_key=api_key,
-            temperature=0.2,
-            max_retries=3
-        )
-    except Exception:
-        # Fallback to secondary model if primary fails
-        return LLM(
-            model="gemini/gemini-1.5-flash",
-            api_key=api_key,
-            temperature=0.2,
-            max_retries=3
-        )
+    return LLM(
+        model=model_name,
+        api_key=api_key,
+        temperature=0.2,
+        max_retries=2
+    )
 
 def run_rescue_mission(report: str, location_query: str, api_key: str):
     # Tool collection step
@@ -39,11 +36,15 @@ def run_rescue_mission(report: str, location_query: str, api_key: str):
     weather_res = get_weather_data(lat, lon)
     rag_res = search_emergency_knowledge(report)
 
-    # Retry loop for 503 demand spikes
-    max_attempts = 3
-    for attempt in range(1, max_attempts + 1):
+    # Combine model candidates (starting with secondary models since primary hit daily quota)
+    candidate_models = ["gemini/gemini-1.5-flash"] + [m for m in FALLBACK_MODELS if m != "gemini/gemini-1.5-flash"]
+
+    last_error = None
+
+    for model_name in candidate_models:
         try:
-            llm = initialize_llm(api_key)
+            print(f"--> Attempting mission execution using model: {model_name}")
+            llm = initialize_llm(api_key, model_name=model_name)
 
             # CrewAI Agents Setup
             incident_analyst = Agent(
@@ -148,7 +149,14 @@ def run_rescue_mission(report: str, location_query: str, api_key: str):
             }
 
         except Exception as e:
-            if "503" in str(e) and attempt < max_attempts:
-                time.sleep(3 * attempt)  # Wait 3s, then 6s before retrying
+            last_error = e
+            err_msg = str(e).lower()
+            if "429" in err_msg or "resource_exhausted" in err_msg or "503" in err_msg:
+                print(f"--> Model {model_name} failed due to quota/rate limit. Falling back to next available model...")
+                time.sleep(1)
                 continue
-            raise e
+            else:
+                raise e
+
+    # If all candidate models failed
+    raise last_error
