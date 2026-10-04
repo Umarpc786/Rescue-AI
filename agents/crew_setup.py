@@ -5,11 +5,12 @@ from tools.geodata import get_location_data
 from tools.retrieval import search_emergency_knowledge
 
 def initialize_llm(api_key: str):
-    """Initialize LLM using CrewAI's native LLM wrapper."""
+    """Initialize LLM using CrewAI's native LLM wrapper targeting active Gemini endpoints."""
     os.environ["GEMINI_API_KEY"] = api_key
     
+    # Using gemini-2.0-flash or gemini-1.5-flash with explicit provider route
     return LLM(
-        model="gemini/gemini-1.5-flash-001",
+        model="gemini/gemini-2.0-flash",
         api_key=api_key,
         temperature=0.2
     )
@@ -89,7 +90,11 @@ def run_rescue_mission(report: str, location_query: str, api_key: str):
     t3 = Task(
         description=f"Evaluate weather hazards using weather data: {weather_res}.",
         expected_output="Weather impact report for emergency response teams.",
-        agent=environment_agent
+        agent=t3 = Task(
+            description=f"Evaluate weather hazards using weather data: {weather_res}.",
+            expected_output="Weather impact report for emergency response teams.",
+            agent=environment_agent
+        )
     )
 
     t4 = Task(
