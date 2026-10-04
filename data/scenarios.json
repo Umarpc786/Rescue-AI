@@ -1,0 +1,14 @@
+[
+  {
+    "id": "bahawalpur_bus",
+    "name": "Bus Accident in Heavy Rain (Bahawalpur)",
+    "location": "Bahawalpur, Punjab, Pakistan",
+    "description": "A bus accident has occurred near Bahawalpur. Approximately eight people are injured and heavy rain is occurring."
+  },
+  {
+    "id": "factory_fire",
+    "name": "Industrial Fire Incident",
+    "location": "Karachi Industrial Area",
+    "description": "A chemical warehouse fire broke out with thick black smoke emitting. 3 workers trapped on upper floor."
+  }
+]
